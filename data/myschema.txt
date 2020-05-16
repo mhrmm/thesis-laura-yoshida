@@ -98,4 +98,15 @@ She picked berries from [ the bushes between the fences ] .
 She picked berries from { the bushes between her classes } .
 The children are not allowed to play in { the rocks under any circumstances } .
 The children are not allowed to play in [ the rocks under that cliff ] .
-
+Eve ate the fruit from [ the tree in the garden ] .
+Eve ate the fruit from { the tree in a moment of rebellion } .
+I drove home for [ Thanksgiving with my parents ] .
+I drove home with { my parents for Thanksgiving } .
+He got kicked out of { school for reading forbidden books } .
+He got kicked out of [ school for wizards ] .
+I got [ whiskey on the rocks ] .
+I got { whiskey on my new laptop } .
+I ended up unconscious in [ the ditch by the side of the road ] .
+I ended up unconscious in { the ditch by picking a fight with the wrong person } .
+I took haphazard { notes on a sticky note } .
+I took haphazard [ notes on lambda calculus ] .
