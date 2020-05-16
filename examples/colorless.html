@@ -1,0 +1,130 @@
+<!DOCTYPE html><html>
+  <head>
+    <title>Hierplane!</title>
+    <link rel="stylesheet" type="text/css" href="http://unpkg.com/hierplane/dist/static/hierplane.min.css">
+  </head>
+  <body>
+    <script src="http://unpkg.com/hierplane/dist/static/hierplane.min.js"></script>
+    <script>
+    const tree ={
+    "nodeTypeToStyle": {
+        "other": [
+            "color0"
+        ],
+        "event": [
+            "color1",
+            "strong"
+        ],
+        "entity": [
+            "color2"
+        ],
+        "detail": [
+            "color3"
+        ],
+        "sequence": [
+            "seq"
+        ],
+        "reference": [
+            "placeholder"
+        ]
+    },
+    "text": "Colorless green ideas sleep furiously .",
+    "root": {
+        "nodeType": "event",
+        "word": "Colorless green ideas sleep furiously .",
+        "link": "S",
+        "children": [
+            {
+                "nodeType": "entity",
+                "word": "Colorless green ideas",
+                "link": "NP",
+                "children": [
+                    {
+                        "nodeType": "detail",
+                        "word": "Colorless",
+                        "link": "JJ",
+                        "spans": [
+                            {
+                                "start": 0,
+                                "end": 9
+                            }
+                        ]
+                    },
+                    {
+                        "nodeType": "detail",
+                        "word": "green",
+                        "link": "JJ",
+                        "spans": [
+                            {
+                                "start": 10,
+                                "end": 15
+                            }
+                        ]
+                    },
+                    {
+                        "nodeType": "entity",
+                        "word": "ideas",
+                        "link": "NNS",
+                        "spans": [
+                            {
+                                "start": 16,
+                                "end": 21
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "nodeType": "event",
+                "word": "sleep furiously",
+                "link": "VP",
+                "children": [
+                    {
+                        "nodeType": "event",
+                        "word": "sleep",
+                        "link": "VBP",
+                        "spans": [
+                            {
+                                "start": 22,
+                                "end": 27
+                            }
+                        ]
+                    },
+                    {
+                        "nodeType": "detail",
+                        "word": "furiously",
+                        "link": "ADVP",
+                        "children": [
+                            {
+                                "nodeType": "detail",
+                                "word": "furiously",
+                                "link": "RB",
+                                "spans": [
+                                    {
+                                        "start": 28,
+                                        "end": 37
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "nodeType": "other",
+                "word": ".",
+                "link": ".",
+                "spans": [
+                    {
+                        "start": 38,
+                        "end": 39
+                    }
+                ]
+            }
+        ]
+    }
+};
+      hierplane.renderTree(tree);
+    </script>
+  </body>
+</html>
