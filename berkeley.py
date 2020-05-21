@@ -1,5 +1,5 @@
 import benepar
-
+from hierplane import NltkTreeWrapper
 
 
 class BerkeleyParser:
@@ -28,4 +28,9 @@ class BerkeleyParser:
         tree = self.parser.parse(sent)
         return set(get_spans_helper(tree.treepositions(), 0))
     
+    def parse_to_hierplane(self, sent):
+        tree = self.parser.parse(sent)
+        nltk_tree = NltkTreeWrapper(tree)
+        return nltk_tree.to_hierplane().to_json()
+        
 

@@ -93,8 +93,11 @@ class HierplaneNode:
             node_type = PTB_STYLE_MAP[self.relationship_to_parent]        
         else:
             node_type = "other"
-        word = self.label
         children = [child.to_json() for child in self.children]
+        if len(children) == 0:
+            word = self.label
+        else:
+            word = self.relationship_to_parent        
         result = {'nodeType': node_type,
                   'word': word,
                   'link': self.relationship_to_parent}
@@ -109,6 +112,19 @@ class HierplaneWindow:
     def __init__(self, root_node, text):
         self.root_node = root_node
         self.text = text
+
+    def to_json(self):
+        pre_json = {'nodeTypeToStyle': {
+                          "other": ["color0"],
+                          "event": ["color1", "strong"],
+                          "entity": ["color2"],
+                          "detail": ["color3"],
+                          "sequence": ["seq"],
+                          "reference": ["placeholder"]
+                        },
+                    'text': self.text,
+                    'root': self.root_node.to_json()}
+        return pre_json
         
     def to_html(self):
         pre_json = {'nodeTypeToStyle': {
