@@ -8,6 +8,7 @@ import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { Nav, Navbar, Form, FormControl } from 'react-bootstrap';
 import styled from 'styled-components';
+import $ from 'jquery';
 const Styles = styled.div`
   .navbar { background-color: #222; }
   a, .navbar-nav, .navbar-light .nav-link {
@@ -147,8 +148,12 @@ const aTree =  {
 };
 
 class TreeContainer extends React.PureComponent {
+  constructor(props) {
+    super(props);    
+  }
+  
   render() {
-    return <Tree tree={aTree} />;
+    return <Tree tree={this.props.value} />;
   }
 }
 
@@ -167,13 +172,14 @@ class FormComponent extends Component {
   }
 
   submitHandler = event => {
+    event.preventDefault();
     this.props.onSubmit(this.state.userinput);
   }
 
   render () {
     return (
-      <Form onSubmit={this.submitHandler} className="form-center">
-          <FormControl type="text" name="userinput" value={this.state.userinput} onChange={this.changeHandler}  placeholder="Enter text" className="" />
+      <Form onSubmit={this.submitHandler} onChange={this.changeHandler} className="form-center">
+          <FormControl type="text" name="userinput" value={this.state.userinput}  placeholder="Enter text" className="" />
       </Form>
     );        
   }
@@ -208,19 +214,45 @@ class NavigationBar extends Component {
 
 
 class App extends React.Component  {
+  constructor(props) {
+    super(props); 
+    this.state = {
+      placeholder: "Enter text",
+      tree: aTree
+    };
+  }
+   
+  componentDidMount(sent) {
+    let url;
+    if(sent === undefined) {
+        url = "http://127.0.0.1:5000/api/v1/translate?sent=Colorless+green+ideas+sleep+furiously+.";
+    }
+    else {
+        url = "http://127.0.0.1:5000/api/v1/translate?sent=" + sent;
+    }
+    fetch(url)
+      .then(results => { 
+        return results.json(); 
+      }).then(data => {
+        data.map((payload) => this.setState({ tree: payload.parse}))
+      });
+  }
+   
   handleSubmit(i) {
-    alert(i);
+    var sentence = i.split(" ").join("+");
+    this.componentDidMount(sentence);
   }
   
   render() {
+      //alert(this.state.placeholder)
       return (
         <div>
             <Router>
-            <NavigationBar onSubmit={this.handleSubmit}                                   
-                     placeholder="Enter text"
+            <NavigationBar onSubmit={i => this.handleSubmit(i)}                                   
+                     placeholder={this.state.placeholder}
               />
             </Router>
-            <TreeContainer />
+            <TreeContainer value={this.state.tree}/>
         </div>
       );
    }
