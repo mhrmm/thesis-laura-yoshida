@@ -9,6 +9,10 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { Nav, Navbar, Form, FormControl } from 'react-bootstrap';
 import styled from 'styled-components';
 import $ from 'jquery';
+
+const TITLE = 'Reed NLP'
+
+
 const Styles = styled.div`
   .navbar { background-color: #222; }
   a, .navbar-nav, .navbar-light .nav-link {
@@ -223,6 +227,7 @@ class App extends React.Component  {
   }
    
   componentDidMount(sent) {
+    document.title = "Reed NLP"
     let url;
     if(sent === undefined) {
         url = "http://127.0.0.1:5000/api/v1/translate?sent=Colorless+green+ideas+sleep+furiously+.";
