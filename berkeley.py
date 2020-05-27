@@ -1,5 +1,5 @@
 import benepar
-from hierplane import NltkTreeWrapper
+from constituency import NltkTreeWrapper
 
 
 class BerkeleyParser:
@@ -34,3 +34,4 @@ class BerkeleyParser:
         return nltk_tree.to_hierplane().to_json()
         
 
+ 

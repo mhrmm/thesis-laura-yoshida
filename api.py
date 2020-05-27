@@ -1,12 +1,14 @@
 import flask
 from flask import request, jsonify
 from berkeley import BerkeleyParser
+from biaffine import BiaffineParser
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 
-parser = BerkeleyParser()
-
+berkeley_parser = BerkeleyParser()
+biaffine_parser = BiaffineParser()
+parser = biaffine_parser
 
 @app.route('/', methods=['GET'])
 def home():
