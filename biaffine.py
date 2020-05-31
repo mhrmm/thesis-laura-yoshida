@@ -1,7 +1,7 @@
 from allennlp.predictors.predictor import Predictor
-from nltk.tree import Tree
 from dependency import DependencyParse
     
+import allennlp_models.syntax.biaffine_dependency_parser
 
 def head_to_tree(heads):
     # takes a list of dependency heads and returns each head's children as a dictionary
@@ -33,14 +33,11 @@ def get_spans(tree):
             spans.append([min(desc)-1,max(desc)])
     return spans
   
-from collections import defaultdict        
 
 class BiaffineParser:
     def __init__(self):
-        self.parser = Predictor.from_path(
-                "https://s3-us-west-2.amazonaws.com/allennlp/models/" + 
-                "biaffine-dependency-parser-ptb-2018.08.23.tar.gz")
-
+        #self.parser = Predictor.from_path("https://allennlp.s3.amazonaws.com/models/biaffine-dependency-parser-ptb-2020.02.10.tar.gz")
+        self.parser = Predictor.from_path("https://storage.googleapis.com/allennlp-public-models/biaffine-dependency-parser-ptb-2020.04.06.tar.gz")
 
     def __call__(self, sent):
         return self.get_spans(sent)
@@ -60,36 +57,10 @@ class BiaffineParser:
         heads = [i-1 for i in json_parse['predicted_heads']]
         words = json_parse['words']
         return DependencyParse(words, heads, deps, tags)
-    
-
-    def parse_to_nltk(self, sent):
-        def parse_to_nltk_h(root):
-            label = words[root]
-            child_trees = []
-            if root in children:
-                for child in children[root]:
-                    child_trees.append(parse_to_nltk_h(child))
-            return Tree(label, child_trees)
-        json_parse = self.parser.predict(sentence=sent)
-        tags = json_parse['pos']
-        deps = json_parse['predicted_dependencies']
-        heads = json_parse['predicted_heads']
-        words = json_parse['words']
-        
-        children = defaultdict(list)
-        for (i, head) in enumerate(heads):
-            children[head-1].append(i)
-        children = dict(children)
-        assert len(children[-1]) == 1
-        root = children[-1][0]
-        return parse_to_nltk_h(root)
-                       
+                         
 
     def parse_to_hierplane(self, sent):
         dparse = self.parse(sent)        
         return dparse.to_hierplane().to_json()
-        #tree = self.parse_to_nltk(sent)
-        #nltk_tree = NltkTreeWrapper(tree)
-        #print(nltk_tree.tree)
-        #return nltk_tree.to_hierplane().to_json()
+        
         

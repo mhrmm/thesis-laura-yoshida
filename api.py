@@ -2,13 +2,14 @@ import flask
 from flask import request, jsonify
 from berkeley import BerkeleyParser
 from biaffine import BiaffineParser
+from coref import AllenCoref
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 
 berkeley_parser = BerkeleyParser()
 biaffine_parser = BiaffineParser()
-parser = biaffine_parser
+allen_coref = AllenCoref()
 
 @app.route('/', methods=['GET'])
 def home():
@@ -26,6 +27,21 @@ def api_id():
     else:
         return "Error: No sent field provided. Please specify a sent."
 
+    if 'model' in request.args:
+        model = request.args['model']
+    else:
+        return "Error: No model field provided. Please specify a model."
+      
+    if model == 'berkeley':
+        parser = berkeley_parser
+    elif model == 'biaffine':
+        parser = biaffine_parser
+    elif model == 'allencoref':
+        parser = allen_coref
+    else:
+        return "Error: Model name not recognized."
+       
+        
     hwindow = parser.parse_to_hierplane(id)
 
     # Create an empty list for our results

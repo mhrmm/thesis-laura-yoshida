@@ -1,26 +1,23 @@
 
 import { Tree } from 'hierplane';
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import './hierplane.min.css';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import { Nav, Navbar, Form, FormControl } from 'react-bootstrap';
+import { BrowserRouter as Router } from "react-router-dom";
+import { Nav, Navbar, Form, FormControl, Dropdown, DropdownButton } from 'react-bootstrap';
 import styled from 'styled-components';
-import $ from 'jquery';
-
-const TITLE = 'Reed NLP'
+import mainLogo from'./reedlogo.png';
 
 
 const Styles = styled.div`
-  .navbar { background-color: #222; }
+  .navbar { background-color: #000; }
   a, .navbar-nav, .navbar-light .nav-link {
-    color: #9FFFCB;
-    &:hover { color: white; }
+    color: black;
+    &:hover { color: #999999; }
   }
   .navbar-brand {
-    font-size: 1.4em;
+    font-size: 1.0em;
     color: #9FFFCB;
     &:hover { color: white; }
   }
@@ -28,6 +25,13 @@ const Styles = styled.div`
     position: absolute !important;
     left: 25%;
     right: 25%;
+  }
+  .active a{
+    background-color: green !important;
+  }
+  img.resize {
+    max-width:50%;
+    max-height:50%;
   }
 `;
 
@@ -152,10 +156,6 @@ const aTree =  {
 };
 
 class TreeContainer extends React.PureComponent {
-  constructor(props) {
-    super(props);    
-  }
-  
   render() {
     return <Tree tree={this.props.value} />;
   }
@@ -193,21 +193,41 @@ class NavigationBar extends Component {
    constructor(props) {
       super(props);    
       this.state = {
+        brandname: 'Constituency Parsing',
         userinput: ''
       }
+   }
+   
+   clickHandler(model) {
+     this.props.onClick(model)
+     var aliases = {
+        'berkeley': 'Constituency Parsing',
+        'biaffine': 'Dependency Parsing',
+        'allencoref': 'Coreference Resolution'
+      }     
+     this.setState({
+       brandname: aliases[model]
+     });
    }
    
    render () {
      return (
        <Styles>
-        <Navbar expand="lg">
-          <Navbar.Brand href="/">Reed NLP</Navbar.Brand>
+        <Navbar expand="lg">           
+          <Navbar.Brand href="/">
+            <img height="40" src={mainLogo} alt="fireSpot"/>
+          </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav"/>
           <FormComponent onSubmit={this.props.onSubmit}/>
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ml-auto">
-              <Nav.Item><Nav.Link href="/">Home</Nav.Link></Nav.Item> 
-              <Nav.Item><Nav.Link href="/about">About</Nav.Link></Nav.Item>
+              <div>
+              <DropdownButton alignRight id="dropdown-basic-button" variant="secondary" title={this.state.brandname}>
+                <Dropdown.Item as="button" onClick={() => this.clickHandler("berkeley")}>Constituency Parsing</Dropdown.Item>
+                <Dropdown.Item as="button" onClick={() => this.clickHandler("biaffine")}>Dependency Parsing</Dropdown.Item>
+                <Dropdown.Item as="button" onClick={() => this.clickHandler("allencoref")}>Coreference Resolution</Dropdown.Item>
+              </DropdownButton>
+              </div>              
             </Nav>
           </Navbar.Collapse>
         </Navbar>
@@ -222,18 +242,20 @@ class App extends React.Component  {
     super(props); 
     this.state = {
       placeholder: "Enter text",
-      tree: aTree
+      tree: aTree,
+      model: "berkeley",
+      sentence: "Green ideas sleep furiously."
     };
   }
    
-  componentDidMount(sent) {
+  componentDidMount(sent, model) {
     document.title = "Reed NLP"
     let url;
     if(sent === undefined) {
-        url = "http://127.0.0.1:5000/api/v1/translate?sent=Colorless+green+ideas+sleep+furiously+.";
+        url = "http://127.0.0.1:5000/api/v1/translate?model=" + model + "&sent=Colorless+green+ideas+sleep+furiously+.";
     }
     else {
-        url = "http://127.0.0.1:5000/api/v1/translate?sent=" + sent;
+        url = "http://127.0.0.1:5000/api/v1/translate?model=" + model + "&sent=" + sent;
     }
     fetch(url)
       .then(results => { 
@@ -244,8 +266,15 @@ class App extends React.Component  {
   }
    
   handleSubmit(i) {
+    this.setState({sentence: i})
     var sentence = i.split(" ").join("+");
-    this.componentDidMount(sentence);
+    this.componentDidMount(sentence, this.state.model);
+  }
+  
+  handleClick(m) {
+    this.setState({model: m})
+    var sentence = this.state.sentence.split(" ").join("+");
+    this.componentDidMount(sentence, m);
   }
   
   render() {
@@ -253,7 +282,8 @@ class App extends React.Component  {
       return (
         <div>
             <Router>
-            <NavigationBar onSubmit={i => this.handleSubmit(i)}                                   
+            <NavigationBar onSubmit={i => this.handleSubmit(i)}  
+                     onClick={model => this.handleClick(model)}                                 
                      placeholder={this.state.placeholder}
               />
             </Router>

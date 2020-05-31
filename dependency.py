@@ -3,13 +3,14 @@
 from collections import defaultdict
 from hierplane import HierplaneNode, HierplaneWindow
 
-PTB_ENTITY_TAGS = ['NP','NX','NN','NNS','NNP','NNPS','PRP','PRP$']
+PTB_ENTITY_TAGS = ['NP','NX','NN','NNS','NNP','NNPS','PRP','PRP$','NOUN','PRON','PROPN']
 PTB_EVENT_TAGS = ['S','SBAR','SBARQ','SINV','SQ','VP','VB','VBD',
-                  'VBG','VBN','VBP','VBZ']
-PTB_DETAIL_TAGS = ['ADJP','ADVP','PP','JJ','JJR','JJS','RB','RBR','RBS','RP','IN']
+                  'VBG','VBN','VBP','VBZ', 'VERB']
+PTB_DETAIL_TAGS = ['ADJP','ADVP','PP','JJ','JJR','JJS','RB','RBR','RBS','RP','IN','ADP','ADJ']
 PTB_STYLE_MAP = dict([(tag, 'entity') for tag in PTB_ENTITY_TAGS]
                      + [(tag, 'event') for tag in PTB_EVENT_TAGS]
                      + [(tag, 'detail') for tag in PTB_DETAIL_TAGS])
+PTB_STYLE_MAP['COREF'] = "reference"
 
 LINK_TO_POSITION = {
   "nsubj": "left",
@@ -93,11 +94,14 @@ class DependencyParse:
         children = []
         for child in root.children:
             children.append(self.to_hierplane_node(child))
+        label = root.label
+        if root.tag.startswith("COREF:"):
+            label = root.tag[len("COREF:"):]
+            root.tag = "COREF"
         node_type = "other"  
         if root.tag in PTB_STYLE_MAP:
             node_type = PTB_STYLE_MAP[root.tag]        
-
-        node = HierplaneNode(root.label, children, root.span, 
+        node = HierplaneNode(label, children, root.span, 
                              root.dependency, node_type)
         return node
     
